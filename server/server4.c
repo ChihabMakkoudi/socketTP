@@ -64,11 +64,16 @@ int main() {
         {
             while ((dir = readdir(d)) != NULL)
             {
+                // printf("dir:%s\n",dir->d_name);
+                
                 send(client_socket, dir->d_name, strlen(dir->d_name), 0);
+                read_len = read(client_socket, buf, MAXBUF);
             }
             closedir(d);
-            send(client_socket,"",strlen(""),0);
+            send(client_socket,"end",strlen("end"),0);
         }
+        read_len = read(client_socket, buf, MAXBUF);
+        printf("reading file \n");
         /* file name */
         read_len = read(client_socket, buf, MAXBUF);
         if(read_len > 0) {

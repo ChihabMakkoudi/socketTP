@@ -14,7 +14,7 @@ int main(int argc, char const* argv[])
 	int opt = 1;
 	int addrlen = sizeof(address);
 	char buffer[1024] = { 0 };
-	char* hello = "Hello from server";
+	char hello[1024] = {0};
 
 	// Creating socket file descriptor
 	if ((server_fd = socket(AF_INET, SOCK_STREAM, 0))
@@ -54,16 +54,15 @@ int main(int argc, char const* argv[])
 	}
 
 	valread = read(new_socket, buffer, 1024);
-	printf("%s\n", buffer);
-	send(new_socket, "ok", strlen("ok"), 0);
-	while (1)
-	{
-		valread = read(new_socket, buffer, 1024);
-		printf("%s\n", buffer);
-		send(new_socket, "ok", strlen("ok"), 0);
-		printf("Hello message sent\n");
-	}
-	
-	
-	return 0;
+	printf("I received : %s\n", buffer);
+	printf("whats your response : ");
+	fflush(stdin);
+	fgets(hello, 256, stdin);
+	send(new_socket, hello, strlen(hello), 0);
+	// printf("Hello client kun\n");   
+  // closing the connected socket
+    close(new_socket);
+  // closing the listening socket
+    shutdown(server_fd, SHUT_RDWR);
+    return 0;
 }

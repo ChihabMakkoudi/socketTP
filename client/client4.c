@@ -38,11 +38,12 @@ int main() {
     while(1) {
         memset(buf, 0x00, MAXBUF);
         read_len = read(socket_ref, buf, MAXBUF);
-        printf("%s\n",buf);
-        if(read_len == EOF | read_len == 0) {
+        send(socket_ref, "ok", strlen("ok"), 0);
+        if(read_len == EOF | read_len == 0 | strcmp(buf,"end")==0) {
             printf("finish file list\n");
-            return -1;
+            break;
         }
+        printf("%s\n",buf);
     }
 
     memset(buf, 0x00, MAXBUF);
