@@ -53,12 +53,20 @@ int main(int argc, char const* argv[])
 		exit(EXIT_FAILURE);
 	}
 
-	valread = read(new_socket, buffer, 1024);
-	printf("I received : %s\n", buffer);
-	printf("whats your response : ");
-	fflush(stdin);
-	fgets(hello, 256, stdin);
-	send(new_socket, hello, strlen(hello), 0);
+	while (1)
+	{
+		memset(buffer, 0x00, 1024);
+		valread = read(new_socket, buffer, 1024);
+		printf("I received : %s\n", buffer);
+		if (strcmp(buffer,"end-connection")==0){
+			break;
+		}
+		printf("whats your response : ");
+		fflush(stdin);
+		fgets(hello, 256, stdin);
+		send(new_socket, hello, strlen(hello), 0);
+	}
+	
 	// printf("Hello client kun\n");   
   // closing the connected socket
     close(new_socket);

@@ -73,9 +73,13 @@ int main() {
             send(client_socket,"end",strlen("end"),0);
         }
         read_len = read(client_socket, buf, MAXBUF);
+        getFile:
         printf("reading file \n");
         /* file name */
         read_len = read(client_socket, buf, MAXBUF);
+        if (strcmp(buf,"/end/")==0){
+            goto closeSocket;
+        }
         if(read_len > 0) {
             strcpy(file_name, buf);
             printf("%s > %s\n", inet_ntoa(clientaddr.sin_addr), file_name);
@@ -96,12 +100,15 @@ int main() {
             read_len = read(file, buf, MAXBUF);
             send(client_socket, buf, read_len, 0);
             if(read_len == 0) {
+                send(client_socket, buf, -1, 0);
                 break;
             }
         }
         printf("finish file\n");
-        close(client_socket);
         close(file);
+        goto getFile;
+        closeSocket:
+        close(client_socket);
     }
     close(server_socket);
     return 0;

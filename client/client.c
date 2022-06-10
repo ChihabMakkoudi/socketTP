@@ -37,14 +37,23 @@ int main(int argc, char const* argv[])
 		printf("\nConnection Failed \n");
 		return -1;
 	}
-	printf("write msg to send to the server:  ");
-    // scanf("%s", hello);
-	fflush(stdin);
-	fgets(hello, 256, stdin);
-	send(sock, hello, strlen(hello), 0);
-	// printf("Hello message sent\n");
-	valread = read(sock, buffer, 1024);
-	printf("I received : %s\n", buffer);
+	while (1)
+	{
+		printf("Msg to send to the server:  ");
+		// scanf("%s", hello);
+		fflush(stdin);
+		fgets(hello, 256, stdin);
+		hello[strcspn(hello, "\n")] = 0;
+		send(sock, hello, strlen(hello), 0);
+		// printf("Hello message sent\n");
+		if (strcmp(hello,"end-connection")==0){
+			break;
+		}
+		memset(buffer, 0x00, 1024);
+		valread = read(sock, buffer, 1024);
+		printf("I received : %s\n", buffer);
+	}
+	
 
 	// closing the connected socket
 	close(client_fd);

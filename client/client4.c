@@ -34,23 +34,27 @@ int main() {
         close(socket_ref);
         return 1;
     }
-    printf("Files:\n______________");
+    printf("Files:\n______________________\n");
     while(1) {
         memset(buf, 0x00, MAXBUF);
         read_len = read(socket_ref, buf, MAXBUF);
         send(socket_ref, "ok", strlen("ok"), 0);
         if(read_len == EOF | read_len == 0 | strcmp(buf,"end")==0) {
-            printf("finish file list\n");
+            printf("______________________\n");
             break;
         }
         printf("%s\n",buf);
     }
-
+    askServ:
     memset(buf, 0x00, MAXBUF);
-    printf("write file name to get from the server:  ");
-    scanf("%socket_ref", buf);
-
-    printf(" > %socket_ref\n", buf);
+    printf("requested file from the server:  ");
+    scanf("%s", buf);
+    if (strcmp(buf,"/end/")==0){
+        send(socket_ref, buf, strlen(buf), 0);
+        return 0;
+        // read(socket_ref, buf, MAXBUF);
+    }
+    printf(" getting > %s\n", buf);
     file_name_len = strlen(buf);
     
     send(socket_ref, buf, file_name_len, 0);
@@ -65,8 +69,9 @@ int main() {
         memset(buf, 0x00, MAXBUF);
         read_len = read(socket_ref, buf, MAXBUF);
         write(file, buf, read_len);
-        if(read_len == EOF | read_len == 0) {
+        if(read_len == EOF | read_len == 0 | read_len < 1024) {
             printf("finish file\n");
+            goto askServ;
             return -1;
         }
     }
